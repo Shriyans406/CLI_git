@@ -1,10 +1,21 @@
 mod cli;
+mod git;
+mod error;
 
 use clap::Parser;
 use cli::{Cli, Commands};
+use git::ensure_git_repo;   // ← ADD this
+
 
 fn main() {
     let cli = Cli::parse();
+    
+    // Ensure we are inside a git repository
+if let Err(e) = ensure_git_repo() {
+    eprintln!("{}", e);
+    return;
+}
+
 
     match cli.command {
         Commands::St => {
