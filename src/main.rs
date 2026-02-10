@@ -13,6 +13,7 @@ use git::ensure_git_repo;   // ← ADD this
 use status::show_status;
 use branch::{list_branches, create_branch};
 use commit::run_commit;
+use branch::cleanup_branches;
 
 
 
@@ -49,7 +50,12 @@ if let Err(e) = ensure_git_repo() {
     }
 }
 
-    Commands::Cleanup => println!("branch cleanup invoked"),
+    Commands::Cleanup => {
+    if let Err(e) = cleanup_branches() {
+        eprintln!("{}", e);
+    }
+}
+
     Commands::Analyze => println!("commit analysis invoked"),
 }
 

@@ -1,4 +1,5 @@
 use dialoguer::{theme::ColorfulTheme, Select, Input, Confirm};
+use dialoguer::MultiSelect;
 
 pub fn select_commit_type() -> String {
     let types = vec!["feat", "fix", "docs", "refactor", "test", "chore"];
@@ -36,3 +37,15 @@ pub fn confirm_commit() -> bool {
         .unwrap()
 }
 
+pub fn select_branches(branches: &[String]) -> Vec<String> {
+    let selections = MultiSelect::with_theme(&ColorfulTheme::default())
+        .with_prompt("Select branches to delete")
+        .items(branches)
+        .interact()
+        .unwrap();
+
+    selections
+        .into_iter()
+        .map(|i| branches[i].clone())
+        .collect()
+}
