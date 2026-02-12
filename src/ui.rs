@@ -1,6 +1,9 @@
 use dialoguer::{theme::ColorfulTheme, Select, Input, Confirm};
 use dialoguer::MultiSelect;
 
+
+
+
 pub fn select_commit_type() -> String {
     let types = vec!["feat", "fix", "docs", "refactor", "test", "chore"];
 
@@ -48,4 +51,25 @@ pub fn select_branches(branches: &[String]) -> Vec<String> {
         .into_iter()
         .map(|i| branches[i].clone())
         .collect()
+}
+
+pub fn interactive_menu() -> Option<String> {
+    let items = vec![
+        "Status",
+        "Branches",
+        "New Branch",
+        "Commit",
+        "Cleanup",
+        "Analyze",
+        "Exit",
+    ];
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Select an action")
+        .items(&items)
+        .default(0)
+        .interact()
+        .ok()?;
+
+    Some(items[selection].to_string())
 }

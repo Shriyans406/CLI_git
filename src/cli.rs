@@ -7,11 +7,12 @@
     about = "A beginner-friendly Git CLI assistant"
 )]
 pub struct Cli {
-    #[command(subcommand)]
-    pub command: Commands,
+ #[command(subcommand)]
+    pub command: Option<Commands>,
 }
 
-#[derive(Subcommand)]
+
+#[derive(Subcommand, Clone)]
 pub enum Commands {
     /// Show repository status
     St,

@@ -13,7 +13,7 @@ use git::ensure_git_repo;
 use status::show_status;
 use branch::{list_branches, create_branch, cleanup_branches};
 use commit::run_commit;
-use analyze::run as run_analyze;   // ← ADD THIS
+use analyze::run as run_analyze;
 
 fn main() {
     let cli = Cli::parse();
@@ -24,7 +24,47 @@ fn main() {
         return;
     }
 
-    match cli.command {
+    // 🔹 INTERACTIVE MODE (when no subcommand provided)
+    if cli.command.is_none() {
+        if let Some(choice) = ui::interactive_menu() {
+            match choice.as_str() {
+                "Status" => {
+                    if let Err(e) = show_status() {
+                        eprintln!("{}", e);
+                    }
+                }
+                "Branches" => {
+                    if let Err(e) = list_branches() {
+                        eprintln!("{}", e);
+                    }
+                }
+                "New Branch" => {
+                    println!("Use CLI: gitx new <branch-name>");
+                }
+                "Commit" => {
+                    if let Err(e) = run_commit() {
+                        eprintln!("{}", e);
+                    }
+                }
+                "Cleanup" => {
+                    if let Err(e) = cleanup_branches() {
+                        eprintln!("{}", e);
+                    }
+                }
+                "Analyze" => {
+                    if let Err(e) = run_analyze() {
+                        eprintln!("{}", e);
+                    }
+                }
+                "Exit" => return,
+                _ => {}
+            }
+        }
+        return;
+    }
+
+    // 🔹 NORMAL CLI MODE (existing logic preserved)
+    match cli.command.unwrap() {
         Commands::St => {
             if let Err(e) = show_status() {
                 eprintln!("{}", e);
