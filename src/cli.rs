@@ -33,5 +33,7 @@ pub enum Commands {
 
     /// Analyze commit history
     Analyze,
+    
+    Push,
 }
 

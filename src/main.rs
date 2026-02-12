@@ -6,6 +6,7 @@ mod branch;
 mod commit;
 mod ui;
 mod analyze;
+mod remote;
 
 use clap::Parser;
 use cli::{Cli, Commands};
@@ -56,6 +57,15 @@ fn main() {
                         eprintln!("{}", e);
                     }
                 }
+                "push" => {
+    if remote::check_remote() {
+        remote::pull_changes();
+        remote::push_changes();
+    } else {
+        println!("No remote configured.");
+    }
+}
+
                 "Exit" => return,
                 _ => {}
             }
@@ -100,6 +110,16 @@ fn main() {
                 eprintln!("{}", e);
             }
         }
+        
+        Commands::Push => {
+    if remote::check_remote() {
+        remote::pull_changes();
+        remote::push_changes();
+    } else {
+        println!("No remote configured.");
+    }
+}
+
     }
 }
 
