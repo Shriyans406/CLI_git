@@ -1,52 +1,60 @@
 use std::process::Command;
+use crate::git::get_current_branch;
 
 pub fn check_remote() -> bool {
     let output = Command::new("git")
-        .arg("remote")
-        .output()
-        .expect("Failed to execute git remote");
+        .args(["remote"])
+        .output();
 
-    let remotes = String::from_utf8_lossy(&output.stdout);
-
-    !remotes.trim().is_empty()
-}
-
-pub fn add_remote(url: &str) {
-    let status = Command::new("git")
-        .args(["remote", "add", "origin", url])
-        .status()
-        .expect("Failed to add remote");
-
-    if status.success() {
-        println!("Remote added successfully.");
-    } else {
-        println!("Failed to add remote.");
+    if let Ok(out) = output {
+        let remotes = String::from_utf8_lossy(&out.stdout);
+        return remotes.contains("origin");
     }
+
+    false
 }
 
 pub fn pull_changes() {
-    let status = Command::new("git")
-        .args(["pull", "origin", "main"])
-        .status()
-        .expect("Failed to pull changes");
+    println!("Pulling latest changes...");
 
-    if status.success() {
-        println!("⬇ Pulled latest changes.");
-    } else {
-        println!("⚠ Pull failed. Resolve conflicts manually.");
+    let branch = match get_current_branch() {
+        Ok(b) => b,
+        Err(_) => {
+            println!("Could not detect branch.");
+            return;
+        }
+    };
+
+    let status = Command::new("git")
+        .args(["pull", "origin", &branch])
+        .status();
+
+    match status {
+        Ok(s) if s.success() => println!("Pull successful."),
+        _ => println!("Pull failed."),
     }
 }
 
 pub fn push_changes() {
-    let status = Command::new("git")
-        .args(["push", "-u", "origin", "main"])
-        .status()
-        .expect("Failed to push changes");
+    println!("Pushing changes...");
 
-    if status.success() {
-        println!("Changes pushed successfully.");
-    } else {
-        println!("Push failed.");
+    let branch = match get_current_branch() {
+        Ok(b) => b,
+        Err(_) => {
+            println!("Could not detect branch.");
+            return;
+        }
+    };
+
+    println!("Current branch: {}", branch);
+
+    let status = Command::new("git")
+        .args(["push", "origin", &branch])
+        .status();
+
+    match status {
+        Ok(s) if s.success() => println!("Push successful."),
+        _ => println!("Push failed."),
     }
 }
 

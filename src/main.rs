@@ -57,7 +57,7 @@ fn main() {
                         eprintln!("{}", e);
                     }
                 }
-                "push" => {
+                "Push" => {
     if remote::check_remote() {
         remote::pull_changes();
         remote::push_changes();

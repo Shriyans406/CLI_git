@@ -22,4 +22,20 @@ pub fn ensure_git_repo() -> Result<(), GitxError> {
         .map_err(|_| GitxError::NotAGitRepository)
 }
 
+pub fn get_current_branch() -> Result<String, GitxError> {
+    let output = Command::new("git")
+        .args(["rev-parse", "--abbrev-ref", "HEAD"])
+        .output()
+        .map_err(|_| GitxError::NotAGitRepository)?;
+
+    if output.status.success() {
+        let branch = String::from_utf8_lossy(&output.stdout)
+            .trim()
+            .to_string();
+
+        Ok(branch)
+    } else {
+        Err(GitxError::NotAGitRepository)
+    }
+}
 

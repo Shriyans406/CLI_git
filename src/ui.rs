@@ -61,6 +61,7 @@ pub fn interactive_menu() -> Option<String> {
         "Commit",
         "Cleanup",
         "Analyze",
+        "Push",
         "Exit",
     ];
 
